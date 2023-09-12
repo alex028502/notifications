@@ -28,7 +28,7 @@
   <script src="vapid-key.js"></script>
   <script>
 
-    navigator.serviceWorker.register("/service-worker.js");
+    navigator.serviceWorker.register("service-worker.js");
 
     // thanks https://developer.mozilla.org/en-US/docs/Web/API/PushManager/getSubscription
     navigator.serviceWorker.ready.then(async function(registration) {
