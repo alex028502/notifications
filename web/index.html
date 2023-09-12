@@ -1,0 +1,59 @@
+<meta charset="UTF-8">
+<head>
+<title>Notification Centre</title>
+</head>
+<body>
+  <p>
+    This is where I register for push notifications for different experiments.
+    It's probably not much good to you since you don't have the vapid keys.
+  </p>
+  <div id="main">
+    <small>
+      If nothing appears, check the log for errors. This will probably fail if
+      you are in private mode for example, or you might have to unregister an old
+      service worker.
+    </small>
+  </div>
+  <script id="controls" type="text/html">
+  <button onclick="register()">register</button><br />
+  </script>
+  <div id="example-div" style="display: none;">
+    - make sure the vapid.json is in the main directory and was used to create this page
+    - save <a id="download-subscription">this file</a> in the main directory<br />
+    - send yourself a message like this<br />
+    <code>
+      node test.js mailto:alex@example.com ALERT -- test message
+    </code><br />
+  </div>
+  <script src="vapid-key.js"></script>
+  <script>
+
+    navigator.serviceWorker.register("/service-worker.js");
+
+    // thanks https://developer.mozilla.org/en-US/docs/Web/API/PushManager/getSubscription
+    navigator.serviceWorker.ready.then(async function(registration) {
+      document.getElementById('main').innerHTML = document.getElementById('controls').innerHTML;
+      // just made a global variable in this example
+      window.registration = registration;
+    });
+
+    async function register() {
+      const subscription = await window.registration.pushManager.subscribe({
+	userVisibleOnly: true,
+	applicationServerKey: publicVapidKey,
+      });
+
+
+
+      const fileContent = JSON.stringify(subscription);
+      const blob = new Blob([fileContent], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.getElementById('download-subscription')
+      a.href = url;
+      a.download = 'subscription.json';
+      document.getElementById("example-div").style.display = "block";
+      document.getElementById("main").style.display = "none";
+    }
+  </script>
+</body>
